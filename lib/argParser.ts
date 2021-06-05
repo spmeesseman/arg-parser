@@ -146,15 +146,19 @@ function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
     //
     const opts = doParseArgs(argMap);
 
+    if (!apOpts) {
+        apOpts = {
+            app: "App",
+            banner: undefined
+        };
+    }
+
     try { //
-         // Display color banner
-        //
-        displayIntro(apOpts?.banner);
-        //
-        // If user specified '-h' or --help', then just display help and exit
+         // If user specified '-h' or --help', then just display help and exit
         //
         if (opts.help)
         {
+            displayIntro(apOpts?.banner);
             displayHelp(argMap);
             process.exit(0);
         }
@@ -164,9 +168,10 @@ function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
         //
         if (opts.version)
         {
+            displayIntro(apOpts?.banner);
             console.log(chalk.bold(gradient("cyan", "pink").multiline(
 `----------------------------------------------------------------------------
-Arg-Parser Version :  ${require("../package.json").version}
+${apOpts.app} Version :  ${require("../package.json").version}
 ----------------------------------------------------------------------------
 `, {interpolation: "hsv"})));
             process.exit(0);
@@ -263,6 +268,7 @@ Arg-Parser Version :  ${require("../package.json").version}
 
         if (opts.verbose) // even if it's a stdout type task
         {
+            displayIntro(apOpts?.banner);
             console.log(gradient("cyan", "pink").multiline(
 `----------------------------------------------------------------------------
 Current Command Line Options
