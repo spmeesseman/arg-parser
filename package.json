@@ -1,6 +1,6 @@
 {
     "name": "@spmeesseman/arg-parser",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "displayName": "Argument Parser",
     "description": "Argument Parser",
     "license": "MIT",
@@ -43,6 +43,6 @@
         "options"
     ],
     "publishConfig": {
-        "access": "restricted"
+        "access": "public"
     }
 }
