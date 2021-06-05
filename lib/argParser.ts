@@ -12,8 +12,8 @@ export interface ArgParserOptions
     banner?: string;
     version?: string;
     enforceConstraints?: boolean;
-    ignore?: string[],
-    ignorePositional?: string[]
+    ignore?: string[];
+    ignorePositional?: string[];
 }
 
 
@@ -60,12 +60,44 @@ function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
         apOpts.app = "0.0.0";
     }
 
+    const argMapExt = { ... {
+        help: [
+            true,
+            "boolean",
+            false,
+            [ "-h", "--help" ],
+            {
+                dest: "help",
+                action: "storeTrue",
+                help: "Display help."
+            }
+        ],
+        verbose: [
+            true,
+            "boolean",
+            false,
+            [ "--verbose" ],
+            {
+                help: "Enable additional log output."
+            }
+        ],
+        version: [
+            true,
+            "boolean",
+            false,
+            [ "-v", "--version" ],
+            {
+                help: "Display the current app-publisher version."
+            }
+        ]
+    }, ... argMap};
+
     //
     // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
     // parse the arguments.  Jeezuz these devs sometimes makes the simplest things so complicated.
     // Achieved half the functionality of the enture argparse library with a 100 line function.
     //
-    const opts = doParseArgs(argMap, apOpts);
+    const opts = doParseArgs(argMapExt, apOpts);
 
     try { //
          // If user specified '-h' or --help', then just display help and exit
@@ -73,7 +105,7 @@ function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
         if (opts.help)
         {
             displayIntro(apOpts?.banner);
-            displayHelp(argMap);
+            displayHelp(argMapExt);
             process.exit(0);
         }
 
@@ -105,14 +137,14 @@ ${apOpts.app} Version :  ${apOpts.version}
                     return; // continue forEach()
                 }
 
-                if (!argMap[property])
+                if (!argMapExt[property])
                 {
                     console.log("Unsupported publishrc option specified:");
                     console.log("   " + property);
                     process.exit(0);
                 }
 
-                if (!argMap[property][0])
+                if (!argMapExt[property][0])
                 {
                     console.log("A publishrc option specified cannot be used on the command line:");
                     console.log("   " + property);
@@ -132,8 +164,8 @@ ${apOpts.app} Version :  ${apOpts.version}
                 //     value = o.toString();
                 // }
 
-                const publishRcType = argMap[property][1].trim(),
-                    defaultValue = argMap[property][2];
+                const publishRcType = argMapExt[property][1].trim(),
+                    defaultValue = argMapExt[property][2];
 
                 if (publishRcType === "flag")
                 {
