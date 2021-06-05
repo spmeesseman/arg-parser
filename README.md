@@ -18,7 +18,7 @@ TODO
 
 ## Issues
 
-Report issues and enhancements in the project's [Github issue tracker](https://github.com/spmeesseman/arg-parse/issues).
+Report issues and enhancements in the project's [Github issue tracker](https://github.com/spmeesseman/arg-parser/issues).
 
 ## Contributing
 

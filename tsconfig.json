@@ -1,0 +1,23 @@
+{
+    "exclude": [
+        "node_modules",
+        "doc",
+        "install",
+        "res",
+        "script",
+        "**/*.spec.ts"
+    ],
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "outDir": "build",
+        "sourceMap": true,
+        "rootDir": ".",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "lib": [
+            "dom",
+            "es6"
+        ],
+    }
+}
