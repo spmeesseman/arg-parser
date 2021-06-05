@@ -29,12 +29,113 @@ class ArgParser
 
     parseArgs(argMap: any)
     {
-        return _parseArgs(argMap);
+        const opts = _parseArgs(argMap);
+
+        //
+        // Validate options
+        //
+        Object.entries(opts).forEach((o) =>
+        {
+            const property: string = o[0];
+            let value: string | string[] = o[1] as (string | string[]);
+
+            if (property === "help" || property === "version") {
+                return; // continue forEach()
+            }
+
+            if (!argMap[property])
+            {
+                console.log("Unsupported publishrc option specified:");
+                console.log("   " + property);
+                process.exit(0);
+            }
+
+            if (!argMap[property][0])
+            {
+                console.log("A publishrc option specified cannot be used on the command line:");
+                console.log("   " + property);
+                process.exit(0);
+            }
+
+            //
+            // Remove properties from the object that were not explicitly specified
+            //
+            if (value === null) {
+                delete opts[o[0]];
+                return; // continue forEach()
+            }
+
+            // if (value instanceof Array)
+            // {
+            //     value = o.toString();
+            // }
+
+            const publishRcType = argMap[property][1].trim(),
+                  defaultValue = argMap[property][2];
+
+            if (publishRcType === "flag")
+            {
+                if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
+                    delete opts[o[0]];
+                    return;
+                }
+                opts[o[0]] = value = value ? "Y" : "N";
+            }
+            else if (publishRcType === "boolean")
+            {
+                if ((!value && !defaultValue) || (value && defaultValue)) {
+                    delete opts[o[0]];
+                    return;
+                }
+            }
+            else if (publishRcType.startsWith("enum("))
+            {
+                let enumIsValid = false, enumValues: string;
+                const matches = publishRcType.match(/[ ]*enum\((.+)\)/);
+                if (matches && matches.length > 1) // [0] is the whole match
+                {                                  // [1] is the 1st capture group match
+                    enumValues = matches[1];
+                    const vStrs = enumValues.split("|");
+                    if (!value) {
+                        value = vStrs[0];
+                    }
+                    else {
+                        for (const v in vStrs)
+                        {
+                            if (value[0] === vStrs[v]) {
+                                value = value[0];
+                                enumIsValid = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!enumIsValid)
+                {
+                    console.log("Invalid publishrc option value specified:");
+                    console.log("   " + property);
+                    console.log("   Must be " + enumValues);
+                    process.exit(0);
+                }
+            }
+        });
+
+        if (opts.verbose) // even if it's a stdout type task
+        {
+            console.log(gradient("cyan", "pink").multiline(
+`----------------------------------------------------------------------------
+Current Command Line Options
+----------------------------------------------------------------------------
+        `, {interpolation: "hsv"}));
+            console.log(JSON.stringify(opts, undefined, 2));
+        }
+
+        return opts;
     }
 }
 
 
-function _parseArgs(argMap: any)
+function _parseArgs(argMap: any): any
 {
     //
     // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
@@ -115,7 +216,7 @@ Arg-Parser Version :  ${require("../package.json").version}
             {
                 if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
                     delete opts[o[0]];
-                    return;
+                    return; // continue forEach()
                 }
                 opts[o[0]] = value = value ? "Y" : "N";
             }
@@ -123,7 +224,7 @@ Arg-Parser Version :  ${require("../package.json").version}
             {
                 if ((!value && !defaultValue) || (value && defaultValue)) {
                     delete opts[o[0]];
-                    return;
+                    return; // continue forEach()
                 }
             }
             else if (publishRcType.startsWith("enum("))
@@ -174,6 +275,8 @@ Current Command Line Options
             stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
         }
     }
+
+    return opts;
 }
 
 
