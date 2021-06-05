@@ -151,7 +151,7 @@ function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
         apOpts = {
             app: "App",
             banner: undefined,
-            version: undefined
+            version: "0.0.0"
         };
     }
 
@@ -173,7 +173,7 @@ function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
             displayIntro(apOpts?.banner);
             console.log(chalk.bold(gradient("cyan", "pink").multiline(
 `----------------------------------------------------------------------------
-${apOpts.app} Version :  ${require("../package.json").version}
+${apOpts.app} Version :  ${apOpts.version}
 ----------------------------------------------------------------------------
 `, {interpolation: "hsv"})));
             process.exit(0);
