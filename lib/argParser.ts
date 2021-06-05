@@ -10,6 +10,7 @@ export interface ArgParserOptions
 {
     app: string;
     banner: string;
+    version: string;
 }
 
 
@@ -149,7 +150,8 @@ function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
     if (!apOpts) {
         apOpts = {
             app: "App",
-            banner: undefined
+            banner: undefined,
+            version: undefined
         };
     }
 

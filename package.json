@@ -1,6 +1,6 @@
 {
     "name": "@spmeesseman/arg-parser",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "displayName": "Argument Parser",
     "description": "Argument Parser",
     "license": "MIT",
@@ -27,7 +27,8 @@
         "typescript": "^4.3.2"
     },
     "scripts": {
-        "build": "npx tsc -p ./"
+        "build": "npx tsc -p ./",
+        "publish-npm": "npm publish"
     },
     "main": "./index.js",
     "files": [
