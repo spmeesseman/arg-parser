@@ -1,5 +1,5 @@
 import { env, stderr } from "process"; // eslint-disable-line node/prefer-global/process
-import { isNumeric } from "./util";
+import { isNumeric } from "./lib/util";
 import * as util from "util";
 import gradient from "gradient-string";
 import chalk from "chalk";
