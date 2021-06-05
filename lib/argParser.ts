@@ -11,7 +11,9 @@ export interface ArgParserOptions
     app: string;
     banner?: string;
     version?: string;
-    enforceConstraints?: boolean
+    enforceConstraints?: boolean;
+    ignore?: string[],
+    ignorePositional?: string[]
 }
 
 
@@ -43,13 +45,6 @@ export class ArgParser
 
 function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
 {
-    //
-    // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
-    // parse the arguments.  Jeezuz these devs sometimes makes the simplest things so complicated.
-    // Achieved half the functionality of the enture argparse library with a 100 line function.
-    //
-    const opts = doParseArgs(argMap);
-
     if (!apOpts) {
         apOpts = {
             app: "App"
@@ -64,6 +59,13 @@ function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
     if (!apOpts.version) {
         apOpts.app = "0.0.0";
     }
+
+    //
+    // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
+    // parse the arguments.  Jeezuz these devs sometimes makes the simplest things so complicated.
+    // Achieved half the functionality of the enture argparse library with a 100 line function.
+    //
+    const opts = doParseArgs(argMap, apOpts);
 
     try { //
          // If user specified '-h' or --help', then just display help and exit
@@ -331,7 +333,7 @@ function getArgsFromProperty(property: string, includeShort?: boolean): string[]
         if (includeShort) {
             args.push("-" + property.replace(/(?:^|\.?)([A-Z])/g, (x, y) => { return y[0].toLowerCase(); }));
         }
-        args.push("-" + property.replace(/(?:^|\.?)([A-Z])/g, (x, y) => { return "-" + y.toLowerCase(); }));
+        args.push("--" + property.replace(/(?:^|\.?)([A-Z])/g, (x, y) => { return "-" + y.toLowerCase(); }));
     }
     return args;
 }
@@ -343,7 +345,7 @@ function getPropertyFromArg(arg: string): string
 }
 
 
-function doParseArgs(argMap: any): any
+function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
 {
     const opts: any = {},
         args = process.argv.slice(2);
@@ -358,7 +360,10 @@ function doParseArgs(argMap: any): any
         {   //
             // Backwards compat
             //
-            if (a === "-p" || a === "--profile") {
+            if (apOpts.ignore?.includes(a)) {
+                return; // continue forEach()
+            }
+            if (apOpts.ignorePositional?.includes(a)) {
                 skipCompat = true;
                 return; // continue forEach()
             }
