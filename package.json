@@ -1,6 +1,6 @@
 {
     "name": "@spmeesseman/arg-parser",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "displayName": "Argument Parser",
     "description": "Argument Parser",
     "license": "MIT",
@@ -31,8 +31,8 @@
     },
     "main": "./index.js",
     "files": [
-        "build/index.js",
-        "build/lib"
+        "index.js",
+        "build/lib/*.js"
     ],
     "keywords": [
         "parser",
