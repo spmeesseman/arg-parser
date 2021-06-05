@@ -9,8 +9,9 @@ import hideSensitive = require("./hideSensitive");
 export interface ArgParserOptions
 {
     app: string;
-    banner: string;
-    version: string;
+    banner?: string;
+    version?: string;
+    enforceConstraints?: boolean
 }
 
 
@@ -25,120 +26,22 @@ export class ArgParser
      * @param [options.banner]
      * A banner to be displayed when the console starts up, using chalk and gradient
      */
-    constructor(options: ArgParserOptions)
+    constructor(options?: ArgParserOptions)
     {
         this.apOpts = options;
+        if (this.apOpts.enforceConstraints === undefined) {
+            this.apOpts.enforceConstraints = true;
+        }
     }
 
     parseArgs(argMap: any)
     {
-        const opts = _parseArgs(this.apOpts, argMap);
-
-        //
-        // Validate options
-        //
-        Object.entries(opts).forEach((o) =>
-        {
-            const property: string = o[0];
-            let value: string | string[] = o[1] as (string | string[]);
-
-            if (property === "help" || property === "version") {
-                return; // continue forEach()
-            }
-
-            if (!argMap[property])
-            {
-                console.log("Unsupported publishrc option specified:");
-                console.log("   " + property);
-                process.exit(0);
-            }
-
-            if (!argMap[property][0])
-            {
-                console.log("A publishrc option specified cannot be used on the command line:");
-                console.log("   " + property);
-                process.exit(0);
-            }
-
-            //
-            // Remove properties from the object that were not explicitly specified
-            //
-            if (value === null) {
-                delete opts[o[0]];
-                return; // continue forEach()
-            }
-
-            // if (value instanceof Array)
-            // {
-            //     value = o.toString();
-            // }
-
-            const publishRcType = argMap[property][1].trim(),
-                  defaultValue = argMap[property][2];
-
-            if (publishRcType === "flag")
-            {
-                if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
-                    delete opts[o[0]];
-                    return;
-                }
-                opts[o[0]] = value = value ? "Y" : "N";
-            }
-            else if (publishRcType === "boolean")
-            {
-                if ((!value && !defaultValue) || (value && defaultValue)) {
-                    delete opts[o[0]];
-                    return;
-                }
-            }
-            else if (publishRcType.startsWith("enum("))
-            {
-                let enumIsValid = false, enumValues: string;
-                const matches = publishRcType.match(/[ ]*enum\((.+)\)/);
-                if (matches && matches.length > 1) // [0] is the whole match
-                {                                  // [1] is the 1st capture group match
-                    enumValues = matches[1];
-                    const vStrs = enumValues.split("|");
-                    if (!value) {
-                        value = vStrs[0];
-                    }
-                    else {
-                        for (const v in vStrs)
-                        {
-                            if (value[0] === vStrs[v]) {
-                                value = value[0];
-                                enumIsValid = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (!enumIsValid)
-                {
-                    console.log("Invalid publishrc option value specified:");
-                    console.log("   " + property);
-                    console.log("   Must be " + enumValues);
-                    process.exit(0);
-                }
-            }
-        });
-
-        if (opts.verbose) // even if it's a stdout type task
-        {
-            console.log(gradient("cyan", "pink").multiline(
-`----------------------------------------------------------------------------
-Current Command Line Options
-----------------------------------------------------------------------------
-        `, {interpolation: "hsv"}));
-            console.log(JSON.stringify(opts, undefined, 2));
-        }
-
-        return opts;
+        return _parseArgs(argMap, this.apOpts);
     }
 }
 
 
-function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
+function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
 {
     //
     // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
@@ -149,10 +52,17 @@ function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
 
     if (!apOpts) {
         apOpts = {
-            app: "App",
-            banner: undefined,
-            version: "0.0.0"
+            app: "App"
         };
+    }
+    if (!apOpts.app) {
+        apOpts.app = "App";
+    }
+    if (!apOpts.banner) {
+        apOpts.app = "Command Line Help by ArgParser";
+    }
+    if (!apOpts.version) {
+        apOpts.app = "0.0.0";
     }
 
     try { //
@@ -179,94 +89,97 @@ ${apOpts.app} Version :  ${apOpts.version}
             process.exit(0);
         }
 
-        //
-        // Validate options
-        //
-        Object.entries(opts).forEach((o) =>
+        if (apOpts.enforceConstraints)
         {
-            const property: string = o[0];
-            let value: string | string[] = o[1] as (string | string[]);
-
-            if (property === "help" || property === "version") {
-                return; // continue forEach()
-            }
-
-            if (!argMap[property])
-            {
-                console.log("Unsupported publishrc option specified:");
-                console.log("   " + property);
-                process.exit(0);
-            }
-
-            if (!argMap[property][0])
-            {
-                console.log("A publishrc option specified cannot be used on the command line:");
-                console.log("   " + property);
-                process.exit(0);
-            }
-
             //
-            // Remove properties from the object that were not explicitly specified
+            // Validate options
             //
-            if (value === null) {
-                delete opts[o[0]];
-                return; // continue forEach()
-            }
-
-            // if (value instanceof Array)
-            // {
-            //     value = o.toString();
-            // }
-
-            const publishRcType = argMap[property][1].trim(),
-                defaultValue = argMap[property][2];
-
-            if (publishRcType === "flag")
+            Object.entries(opts).forEach((o) =>
             {
-                if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
+                const property: string = o[0];
+                let value: string | string[] = o[1] as (string | string[]);
+
+                if (property === "help" || property === "version") {
+                    return; // continue forEach()
+                }
+
+                if (!argMap[property])
+                {
+                    console.log("Unsupported publishrc option specified:");
+                    console.log("   " + property);
+                    process.exit(0);
+                }
+
+                if (!argMap[property][0])
+                {
+                    console.log("A publishrc option specified cannot be used on the command line:");
+                    console.log("   " + property);
+                    process.exit(0);
+                }
+
+                //
+                // Remove properties from the object that were not explicitly specified
+                //
+                if (value === null) {
                     delete opts[o[0]];
                     return; // continue forEach()
                 }
-                opts[o[0]] = value = value ? "Y" : "N";
-            }
-            else if (publishRcType === "boolean")
-            {
-                if ((!value && !defaultValue) || (value && defaultValue)) {
-                    delete opts[o[0]];
-                    return; // continue forEach()
-                }
-            }
-            else if (publishRcType.startsWith("enum("))
-            {
-                let enumIsValid = false, enumValues: string;
-                const matches = publishRcType.match(/[ ]*enum\((.+)\)/);
-                if (matches && matches.length > 1) // [0] is the whole match
-                {                                  // [1] is the 1st capture group match
-                    enumValues = matches[1];
-                    const vStrs = enumValues.split("|");
-                    if (!value) {
-                        value = vStrs[0];
+
+                // if (value instanceof Array)
+                // {
+                //     value = o.toString();
+                // }
+
+                const publishRcType = argMap[property][1].trim(),
+                    defaultValue = argMap[property][2];
+
+                if (publishRcType === "flag")
+                {
+                    if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
+                        delete opts[o[0]];
+                        return; // continue forEach()
                     }
-                    else {
-                        for (const v in vStrs)
-                        {
-                            if (value[0] === vStrs[v]) {
-                                value = value[0];
-                                enumIsValid = true;
-                                break;
+                    opts[o[0]] = value = value ? "Y" : "N";
+                }
+                else if (publishRcType === "boolean")
+                {
+                    if ((!value && !defaultValue) || (value && defaultValue)) {
+                        delete opts[o[0]];
+                        return; // continue forEach()
+                    }
+                }
+                else if (publishRcType.startsWith("enum("))
+                {
+                    let enumIsValid = false, enumValues: string;
+                    const matches = publishRcType.match(/[ ]*enum\((.+)\)/);
+                    if (matches && matches.length > 1) // [0] is the whole match
+                    {                                  // [1] is the 1st capture group match
+                        enumValues = matches[1];
+                        const vStrs = enumValues.split("|");
+                        if (!value) {
+                            value = vStrs[0];
+                        }
+                        else {
+                            for (const v in vStrs)
+                            {
+                                if (value[0] === vStrs[v]) {
+                                    value = value[0];
+                                    enumIsValid = true;
+                                    break;
+                                }
                             }
                         }
                     }
+                    if (!enumIsValid)
+                    {
+                        console.log("Invalid publishrc option value specified:");
+                        console.log("   " + property);
+                        console.log("   Must be " + enumValues);
+                        process.exit(0);
+                    }
                 }
-                if (!enumIsValid)
-                {
-                    console.log("Invalid publishrc option value specified:");
-                    console.log("   " + property);
-                    console.log("   Must be " + enumValues);
-                    process.exit(0);
-                }
-            }
-        });
+            });
+        }
 
         if (opts.verbose) // even if it's a stdout type task
         {
