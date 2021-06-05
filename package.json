@@ -1,12 +1,12 @@
 {
-    "name": "@perryjohnson/arg-parser",
+    "name": "@spmeesseman/arg-parser",
     "version": "0.0.1",
     "displayName": "Argument Parser",
     "description": "Argument Parser",
     "license": "MIT",
     "author": {
         "name": "Scott Meesseman",
-        "email": "smeesseman@pjats.com"
+        "email": "spmeesseman@gmail.com"
     },
     "bugs": {
         "url": "https://github.com/spmeesseman/arg-parser/issues"

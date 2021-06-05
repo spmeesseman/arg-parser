@@ -5,28 +5,57 @@ import gradient from "gradient-string";
 import chalk from "chalk";
 import hideSensitive = require("./lib/hideSensitive");
 
-export = async () =>
+class ArgParser {
+    /*
+     *  Object for parsing command line strings into Python objects.
+     *
+     *  Keyword Arguments:
+     *      - prog -- The name of the program (default: sys.argv[0])
+     *      - usage -- A usage message (default: auto-generated from arguments)
+     *      - description -- A description of what the program does
+     *      - epilog -- Text following the argument descriptions
+     *      - parents -- Parsers whose arguments should be copied into this one
+     *      - formatter_class -- HelpFormatter class for printing help messages
+     *      - prefix_chars -- Characters that prefix optional arguments
+     *      - fromfile_prefix_chars -- Characters that prefix files containing
+     *          additional arguments
+     *      - argument_default -- The default value for all arguments
+     *      - conflict_handler -- String indicating how to handle conflicts
+     *      - add_help -- Add a -h/-help option
+     *      - allow_abbrev -- Allow long options to be abbreviated unambiguously
+     *      - exit_on_error -- Determines whether or not ArgumentParser exits with
+     *          error info when an error occurs
+     */
+
+    // tslint:disable-next-line: no-empty
+    constructor() { }
+
+    _parseArgs(argMap: any)
+    {
+        return _parseArgs(argMap);
+    }
+}
+
+
+function _parseArgs(argMap: any)
 {
     //
     // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
     // parse the arguments.  Jeezuz these devs sometimes makes the simplest things so complicated.
     // Achieved half the functionality of the enture argparse library with a 100 line function.
     //
-    const opts = parseArgs();
+    const opts = doParseArgs(argMap);
 
     try { //
-         // Display color banner
+        // Display color banner
         //
-        if (!opts.taskVersionCurrent && !opts.taskVersionNext && !opts.taskVersionInfo && !opts.taskCiEvInfo) {
-            displayIntro();
-        }
-
+        displayIntro(opts.banner);
         //
         // If user specified '-h' or --help', then just display help and exit
         //
         if (opts.help)
         {
-            displayArgParseHelp();
+            displayHelp(argMap);
             process.exit(0);
         }
 
@@ -37,9 +66,9 @@ export = async () =>
         {
             console.log(chalk.bold(gradient("cyan", "pink").multiline(
 `----------------------------------------------------------------------------
- Arg-Parser Version :  ${require("../package.json").version}
+Arg-Parser Version :  ${require("../package.json").version}
 ----------------------------------------------------------------------------
-                        `, {interpolation: "hsv"})));
+`, {interpolation: "hsv"})));
             process.exit(0);
         }
 
@@ -55,14 +84,14 @@ export = async () =>
                 return; // continue forEach()
             }
 
-            if (!publishRcOpts[property])
+            if (!argMap[property])
             {
                 console.log("Unsupported publishrc option specified:");
                 console.log("   " + property);
                 process.exit(0);
             }
 
-            if (!publishRcOpts[property][0])
+            if (!argMap[property][0])
             {
                 console.log("A publishrc option specified cannot be used on the command line:");
                 console.log("   " + property);
@@ -82,8 +111,8 @@ export = async () =>
             //     value = o.toString();
             // }
 
-            const publishRcType = publishRcOpts[property][1].trim(),
-                  defaultValue = publishRcOpts[property][2];
+            const publishRcType = argMap[property][1].trim(),
+                defaultValue = argMap[property][2];
 
             if (publishRcType === "flag")
             {
@@ -138,39 +167,28 @@ export = async () =>
 `----------------------------------------------------------------------------
 Current Command Line Options
 ----------------------------------------------------------------------------
-        `, {interpolation: "hsv"}));
+`, {interpolation: "hsv"}));
             console.log(JSON.stringify(opts, undefined, 2));
         }
-
-        await require(".")(opts);
-        return 0;
     }
     catch (error)
     {
         if (error.name !== "YError") {
             stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
+        }
     }
-
-    return 1;
-  }
-};
-
-
-function displayIntro()
-{
-    const title =
-`                                       _      _       _
-  _ _ __ _ __   _ __      _ __  _   __| |_ | (_)_____| |  ____  ____
- / _\\' || '_ \\\\| '_ \\\\___| '_ \\\\| \\ \\ |  _\\| | || ___| \\_/ _ \\\\/  _|
- | (_| || |_) || |_) |___| |_) || |_| | |_)| | | \\\\__| __ | __/| |
- \\__\\\\__| | .//| | .//   | | .//|____/|___/|_|_|/___/|_| \\___|.|_| v${require("../package.json").version} 
-        |_|    |_|       |_|                                                    
-    `;
-    console.log(chalk.bold(gradient("cyan", "pink").multiline(title, {interpolation: "hsv"})));
 }
 
 
-function displayArgParseHelp()
+function displayIntro(banner: string)
+{
+    if (banner) {
+        console.log(chalk.bold(gradient("cyan", "pink").multiline(banner, {interpolation: "hsv"})));
+    }
+}
+
+
+function displayHelp(argMap: any)
 {
     console.log(gradient("cyan", "pink").multiline(
 `----------------------------------------------------------------------------
@@ -187,12 +205,12 @@ Detailed Help
     console.log("      --email-notification");
     console.log("");
 
-    Object.entries(publishRcOpts).forEach((o) =>
+    Object.entries(argMap).forEach((o) =>
     {
         if (!o || !o[0]) { return; }
         let line = `  ${o[0]}`;
         const property =  o[0],
-              def = o[1];
+            def = o[1];
 
         if (property.length < 22)
         {
@@ -221,7 +239,7 @@ Detailed Help
             else if (def.length > 4 && def[4] instanceof Object)          //  [
             {                                                             //     true,
                 const odef = def[4],                                      //     "boolean"
-                      lines = odef.help.split("\n");                      //     true,
+                    lines = odef.help.split("\n");                      //     true,
                 line += lines[0];                                         //     [ -h, ---help ],
                 console.log(line);                                        //     {
                 for (let i = 1; i < lines.length; i++) {                  //       help: "Display help.  This continues" +
@@ -302,10 +320,10 @@ function getPropertyFromArg(arg: string): string
 }
 
 
-function parseArgs(): any
+function doParseArgs(argMap: any): any
 {
     const opts: any = {},
-          args = process.argv.slice(2);
+        args = process.argv.slice(2);
     let lastProp: string,
         lastType: string,
         lastIsPositional: boolean,
@@ -323,7 +341,7 @@ function parseArgs(): any
             }
             //
             const p = getPropertyFromArg(a);
-            if (!p || !publishRcOpts[p])
+            if (!p || !argMap[p])
             {
                 console.log("Unsupported publishrc option specified:");
                 console.log("   " + a);
@@ -342,8 +360,8 @@ function parseArgs(): any
                 }
             }
 
-            const valueType = publishRcOpts[p][1];
-                  // defaultValue = publishRcOpts[p][2];
+            const valueType = argMap[p][1];
+                // defaultValue = argMap[p][2];
 
             lastProp = p;               // Record 'last', used for positionals
             lastType = valueType;
@@ -357,7 +375,7 @@ function parseArgs(): any
         }
         else if (lastProp)
         {
-            const valueType = publishRcOpts[lastProp][1];
+            const valueType = argMap[lastProp][1];
             //
             // Backwards compat
             //
@@ -451,4 +469,6 @@ function parseArgs(): any
     return opts;
 }
 
-
+module.exports = {
+    ArgParser
+};
