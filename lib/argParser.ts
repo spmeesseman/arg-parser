@@ -16,6 +16,15 @@ export interface ArgParserOptions
     ignorePositional?: string[];
 }
 
+export interface ArgParserDefinition
+{
+    argument: string | string[]
+    default: string | string[] | boolean | number;
+    help: string;
+    isCmdLine: boolean;
+    type: string;
+}
+
 
 export class ArgParser
 {
