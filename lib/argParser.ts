@@ -5,10 +5,14 @@ import gradient from "gradient-string";
 import chalk from "chalk";
 import hideSensitive = require("./hideSensitive");
 
+interface ArgParserOptions {
+    app: string,
+    banner: string
+};
+
 class ArgParser
 {
-    app: string;
-    banner: string;
+    apOpts: ArgParserOptions;
 
     /**
      * Instantiates an argument parser
@@ -17,19 +21,14 @@ class ArgParser
      * @param [options.banner]
      * A banner to be displayed when the console starts up, using chalk and gradient
      */
-    constructor(options: {
-        app: string,
-        banner: string })
+    constructor(options: ArgParserOptions)
     {
-        if (options) {
-            this.app = options.app;
-            this.banner = options.banner;
-        }
+        this.apOpts = options;
     }
 
     parseArgs(argMap: any)
     {
-        const opts = _parseArgs(argMap);
+        const opts = _parseArgs(this.apOpts, argMap);
 
         //
         // Validate options
@@ -135,7 +134,7 @@ Current Command Line Options
 }
 
 
-function _parseArgs(argMap: any): any
+function _parseArgs(apOpts: ArgParserOptions, argMap: any): any
 {
     //
     // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
@@ -145,9 +144,9 @@ function _parseArgs(argMap: any): any
     const opts = doParseArgs(argMap);
 
     try { //
-        // Display color banner
+         // Display color banner
         //
-        displayIntro(opts.banner);
+        displayIntro(apOpts?.banner);
         //
         // If user specified '-h' or --help', then just display help and exit
         //
