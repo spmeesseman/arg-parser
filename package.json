@@ -1,0 +1,49 @@
+{
+    "name": "@perryjohnson/arg-parser",
+    "version": "0.0.1",
+    "displayName": "Argument Parser",
+    "description": "Argument Parser",
+    "license": "MIT",
+    "author": {
+        "name": "Scott Meesseman",
+        "email": "smeesseman@pjats.com"
+    },
+    "bugs": {
+        "url": "https://github.com/spmeesseman/arg-parser/issues"
+    },
+    "homepage": "https://github.com/spmeesseman/arg-parser",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/spmeesseman/arg-parser.git"
+    },
+    "dependencies": {
+        "chalk": "^4.1.1",
+        "gradient-string": "^1.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^15.12.1",
+        "eslint": "^7.28.0",
+        "tslint": "^6.1.3",
+        "typescript": "^4.3.2"
+    },
+    "scripts": {
+        "build": "npx tsc -p ./",
+        "help": "npx ./build/bin/arg-parser.js --help",
+        "version_ap": "npx ./build/bin/arg-parser.js --version",
+        "jenkins-validate-jenkinsfile": "cmd /c curl -X POST -L -H \"Authorization: basic c21lZXNzZW1hbjoxMTU5NzgyYTBmNDE5OTI2M2VkYTY0ZTVlZjViYzIzZDY4\" -F \"jenkinsfile=<Jenkinsfile\" https://jenkins.spmeesseman.com/pipeline-model-converter/validate"
+    },
+    "main": "./index.js",
+    "files": [
+        "build/*.js"
+    ],
+    "keywords": [
+        "parser",
+        "command line",
+        "shell",
+        "arguments",
+        "options"
+    ],
+    "publishConfig": {
+        "access": "restricted"
+    }
+}
