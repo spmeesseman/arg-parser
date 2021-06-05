@@ -30,7 +30,7 @@
         "build": "npx tsc -p ./",
         "help": "npx ./build/bin/arg-parser.js --help",
         "version_ap": "npx ./build/bin/arg-parser.js --version",
-        "jenkins-validate-jenkinsfile": "cmd /c curl -X POST -L -H \"Authorization: basic c21lZXNzZW1hbjoxMTU5NzgyYTBmNDE5OTI2M2VkYTY0ZTVlZjViYzIzZDY4\" -F \"jenkinsfile=<Jenkinsfile\" https://jenkins.spmeesseman.com/pipeline-model-converter/validate"
+        "jenkins-validate-jenkinsfile": "cmd /c curl -X POST -L -H \"Authorization: basic \" -F \"jenkinsfile=<Jenkinsfile\" https://jenkins.spmeesseman.com/pipeline-model-converter/validate"
     },
     "main": "./index.js",
     "files": [
