@@ -5,12 +5,15 @@ import gradient from "gradient-string";
 import chalk from "chalk";
 import hideSensitive = require("./hideSensitive");
 
-interface ArgParserOptions {
-    app: string,
-    banner: string
-};
 
-class ArgParser
+export interface ArgParserOptions
+{
+    app: string;
+    banner: string;
+}
+
+
+export class ArgParser
 {
     apOpts: ArgParserOptions;
 
@@ -567,7 +570,3 @@ function doParseArgs(argMap: any): any
 
     return opts;
 }
-
-module.exports = {
-    ArgParser
-};
