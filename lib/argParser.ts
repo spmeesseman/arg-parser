@@ -292,7 +292,7 @@ Detailed Help
         {
             const valueType: string = def[1] as string,
                 cmdLineArgs = getArgsFromProperty(property);
-            let cmdLine = "", usage = "";
+            let cmdLine = "", usage: string | string[] = "";
 
             if (def[3] instanceof String || typeof def[3] === "string")   //  [
             {                                                             //    true,
@@ -354,7 +354,16 @@ Detailed Help
             console.log("                        Defaults to  : " + def[2].toString());
             console.log("                        Command Line : " + cmdLine);
             if (usage) {
-                console.log("                        Usage        : " + usage);
+                if (usage instanceof Array)
+                {
+                    console.log("                        Usage        :");
+                    for (const u in usage) {
+                        console.log("                                      " + u);
+                    }
+                }
+                else {
+                    console.log("                        Usage        : " + usage);
+                }
             }
             console.log("");
         }
