@@ -174,7 +174,7 @@ ${apOpts.app} Version :  ${apOpts.version}
                 // }
 
                 const publishRcType = argMapExt[property][1].trim(),
-                    defaultValue = argMapExt[property][2];
+                      defaultValue = argMapExt[property][2];
 
                 if (publishRcType === "flag")
                 {
@@ -291,7 +291,7 @@ Detailed Help
         if (def && def instanceof Array && def.length > 3)
         {
             const valueType: string = def[1] as string,
-                cmdLineArgs = getArgsFromProperty(property);
+                cmdLineArgs = getArgsFromProperty(property, argMap);
             let cmdLine = "", usage: string | string[] = "";
 
             if (def[3] instanceof String || typeof def[3] === "string")   //  [
@@ -305,7 +305,7 @@ Detailed Help
             else if (def.length > 4 && def[4] instanceof Object)          //  [
             {                                                             //     true,
                 const odef = def[4],                                      //     "boolean"
-                    lines = odef.help.split("\n");                      //     true,
+                    lines = odef.help.split("\n");                      //       true,
                 line += lines[0];                                         //     [ -h, ---help ],
                 console.log(line);                                        //     {
                 for (let i = 1; i < lines.length; i++) {                  //       help: "Display help.  This continues" +
@@ -375,15 +375,38 @@ Detailed Help
 }
 
 
-function getArgsFromProperty(property: string, includeShort?: boolean): string[]
+function getArgsFromProperty(property: string, argMap: any): string[]
 {
     const args: string[] = [];
     if (property)
     {
-        if (includeShort) {
-            args.push("-" + property.replace(/(?:^|\.?)([A-Z])/g, (x, y) => { return y[0].toLowerCase(); }));
+        let added = false;
+        const mapArg: string | string[] = argMap[property][3];
+        if (mapArg.length > 0) {
+            if (mapArg instanceof Array) {
+                for (const mArg in mapArg) {
+                    if (mArg.startsWith("-")) {
+                        args.push(mArg);
+                        added = true;
+                    }
+                    else {
+                        console.log("!!! Invalid argument specified in " + property + " mapping !!!")
+                    }
+                }
+            }
+            else {
+                if (mapArg.startsWith("-")) {
+                    args.push(mapArg);
+                    added = true;
+                }
+                else {
+                    console.log("!!! Invalid argument specified in " + property + " mapping !!!")
+                }
+            }
         }
-        args.push("--" + property.replace(/(?:^|\.?)([A-Z])/g, (x, y) => { return "-" + y.toLowerCase(); }));
+        if (!added) {
+            args.push("--" + property.replace(/(?:^|\.?)([A-Z])/g, (x, y) => { return "-" + y.toLowerCase(); }));
+        }
     }
     return args;
 }
