@@ -356,9 +356,9 @@ Detailed Help
             if (usage) {
                 if (usage instanceof Array)
                 {
-                    console.log("                        Usage        :");
-                    for (const u in usage) {
-                        console.log("                                      " + u);
+                    console.log("                        Usage        : " + usage[0]);
+                    for (let i = 1; i < usage.length; i++) {
+                        console.log("                                      " + usage[i]);
                     }
                 }
                 else {
