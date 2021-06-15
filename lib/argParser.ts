@@ -381,8 +381,9 @@ function getArgsFromProperty(property: string, argMap: any): string[]
     if (property)
     {
         let added = false;
-        const mapArg: string | string[] = argMap[property][3];
-        if (mapArg.length > 0) {
+        const mapArg: string | string[] = argMap[property][3],
+              hasNewDef = argMap[property][4] instanceof Object;
+        if (hasNewDef && mapArg.length > 0) {
             if (mapArg instanceof Array) {
                 for (const mArg in mapArg) {
                     if (mArg.startsWith("-")) {
