@@ -358,7 +358,7 @@ Detailed Help
                 {
                     console.log("                        Usage        : " + usage[0]);
                     for (let i = 1; i < usage.length; i++) {
-                        console.log("                                      " + usage[i]);
+                        console.log("                                       " + usage[i]);
                     }
                 }
                 else {
