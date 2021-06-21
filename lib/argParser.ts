@@ -385,7 +385,7 @@ function getArgsFromProperty(property: string, argMap: any): string[]
               hasNewDef = argMap[property][4] instanceof Object;
         if (hasNewDef && mapArg.length > 0) {
             if (mapArg instanceof Array) {
-                for (const mArg in mapArg) {
+                for (const mArg of mapArg) {
                     if (mArg.startsWith("-")) {
                         args.push(mArg);
                         added = true;
