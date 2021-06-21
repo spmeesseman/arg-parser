@@ -391,7 +391,7 @@ function getArgsFromProperty(property: string, argMap: any): string[]
                         added = true;
                     }
                     else {
-                        console.log("!!! Invalid argument specified in " + property + " mapping !!!")
+                        console.log("!!! Invalid argument specified in " + property + " mapping !!!");
                     }
                 }
             }
@@ -401,7 +401,7 @@ function getArgsFromProperty(property: string, argMap: any): string[]
                     added = true;
                 }
                 else {
-                    console.log("!!! Invalid argument specified in " + property + " mapping !!!")
+                    console.log("!!! Invalid argument specified in " + property + " mapping !!!");
                 }
             }
         }
