@@ -413,9 +413,25 @@ function getArgsFromProperty(property: string, argMap: any): string[]
 }
 
 
-function getPropertyFromArg(arg: string): string
+function getPropertyFromArg(arg: string, argMap: any): string | undefined
 {
-    return arg.replace(/^[\-]{1,2}/, "").replace(/([\-])([a-z])/g, (x, y, z) => { return z.toUpperCase(); });
+    if (arg.startsWith("--")) {
+        return arg.replace(/^[\-]{2}/, "").replace(/([\-])([a-z])/g, (x, y, z) => { return z.toUpperCase(); });
+    }
+    for (const a in argMap)
+    {
+        let value = argMap[a];
+        if (value && value.length > 3)
+        {
+            const argStrings = value[3];
+            if (argStrings instanceof Array)
+            {
+                if (argStrings.includes(arg)) {
+                    return a;
+                }
+            }
+        }
+    }
 }
 
 
