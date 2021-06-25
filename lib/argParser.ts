@@ -458,7 +458,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                 return; // continue forEach()
             }
             //
-            const p = getPropertyFromArg(a);
+            const p = getPropertyFromArg(a, argMap);
             if (!p || !argMap[p])
             {
                 console.log("Unsupported publishrc option specified:");
