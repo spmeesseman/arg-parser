@@ -1,0 +1,24 @@
+{
+    "projectName":      "arg-parser",
+    "branch":           "main",
+    "bugs":             "https://github.com/spmeesseman/arg-parser/issues",
+    "buildCommand": [
+        "npm run build"
+    ],
+    "changelogFile":     "CHANGELOG.md",
+    "dryRunVcRevert":    "Y",
+    "githubRelease":     "Y",
+    "githubAssets":      [
+        "CHANGELOG.md"
+    ],
+    "githubUser":        "spmeesseman",
+    "homePage":          "https://github.com/spmeesseman/arg-parser",
+    "npmRelease":        "Y",
+    "repo":              "https://github.com/spmeesseman/arg-parser.git",
+    "repoType":          "git",
+    "skipChangelogEdits":"N",
+    "skipVersionEdits":  "N",
+    "testEmailRecip":    "spmeesseman@gmail.com",
+    "textEditor":        "notepad",
+    "vcWebPath":         "https://github.com/spmeesseman/arg-parser"
+}
