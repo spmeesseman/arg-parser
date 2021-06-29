@@ -3,13 +3,13 @@
 [![authors](https://img.shields.io/badge/authors-scott%20meesseman-6F02B5.svg?logo=visual%20studio%20code)](https://www.littlesm.com)
 [![app-category](https://img.shields.io/badge/category-jenkins%20plugins-blue.svg)](https://github.com/spmeesseman/arg-parser)
 [![app-lang](https://img.shields.io/badge/language-java%20maven-blue.svg)](https://github.com/spmeesseman/arg-parser)
-[![app-publisher](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-jenkins--mantisbt--plugin-e10000.svg)](https://github.com/spmeesseman/arg-parser)
+[![app-publisher](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-app--publisher-e10000.svg)](https://github.com/spmeesseman/app-publisher)
 [![PayPalDonate](https://img.shields.io/badge/paypal-donate-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=YWZXT3KE2L4BA&item_name=taskexplorer&currency_code=USD)
 
-[![GitHub issues open](https://img.shields.io/github/issues-raw/spmeesseman/jenkins%2dmantisbt%2dplugin.svg?logo=github)](https://github.com/spmeesseman/arg-parser/issues)
-[![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/spmeesseman/jenkins%2dmantisbt%2dplugin.svg?logo=github)](https://github.com/spmeesseman/arg-parser/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/spmeesseman/jenkins%2dmantisbt%2dplugin.svg?logo=github)](https://github.com/spmeesseman/arg-parser/pulls)
-[![GitHub last commit](https://img.shields.io/github/last-commit/spmeesseman/jenkins%2dmantisbt%2dplugin.svg?logo=github)](https://github.com/spmeesseman/arg-parser)
+[![GitHub issues open](https://img.shields.io/github/issues-raw/spmeesseman/arg%2dparser.svg?logo=github)](https://github.com/spmeesseman/arg-parser/issues)
+[![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/spmeesseman/arg%2dparser.svg?logo=github)](https://github.com/spmeesseman/arg-parser/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/spmeesseman/arg%2dparser.svg?logo=github)](https://github.com/spmeesseman/arg-parser/pulls)
+[![GitHub last commit](https://img.shields.io/github/last-commit/spmeesseman/arg%2dparser.svg?logo=github)](https://github.com/spmeesseman/arg-parser)
 
 - [Command Line Argument Parser](#command-line-argument-parser)
   - [Introduction](#introduction)
