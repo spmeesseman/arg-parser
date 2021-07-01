@@ -1,16 +1,12 @@
 import { env, stderr } from "process"; // eslint-disable-line node/prefer-global/process
 import { isNumeric } from "./util";
 import * as util from "util";
-import gradient from "gradient-string";
-import chalk from "chalk";
 import hideSensitive = require("./hideSensitive");
 
 
 export interface ArgParserOptions
 {
     app: string;
-    banner?: string;
-    version?: string;
     enforceConstraints?: boolean;
     ignore?: string[];
     ignorePositional?: string[];
@@ -28,7 +24,8 @@ export interface ArgParserDefinition
 
 export class ArgParser
 {
-    apOpts: ArgParserOptions;
+    private apOpts: ArgParserOptions;
+    public errors: string[];
 
     /**
      * Instantiates an argument parser
@@ -47,12 +44,19 @@ export class ArgParser
 
     parse(argMap: any)
     {
-        return _parseArgs(argMap, this.apOpts);
+        const o = _parseArgs(argMap, this.apOpts);
+        if (o.err.length > 0) {
+            this.errors = [ ...o.err ];
+        }
+        return o.opts;
     }
 }
 
 
-function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
+const errors: string[] = [];
+
+
+function _parseArgs(argMap: any, apOpts?: ArgParserOptions): { opts: any, err: string[] }
 {
     if (!apOpts) {
         apOpts = {
@@ -62,171 +66,96 @@ function _parseArgs(argMap: any, apOpts?: ArgParserOptions): any
     if (!apOpts.app) {
         apOpts.app = "App";
     }
-    if (!apOpts.banner) {
-        apOpts.app = "Command Line Help by ArgParser";
-    }
-    if (!apOpts.version) {
-        apOpts.app = "0.0.0";
-    }
-
-    const argMapExt = { ... {
-        help: [
-            true,
-            "boolean",
-            false,
-            [ "-h", "--help" ],
-            {
-                dest: "help",
-                action: "storeTrue",
-                help: "Display help."
-            }
-        ],
-        verbose: [
-            true,
-            "boolean",
-            false,
-            [ "--verbose" ],
-            {
-                help: "Enable additional log output."
-            }
-        ],
-        version: [
-            true,
-            "boolean",
-            false,
-            [ "-v", "--version" ],
-            {
-                help: "Display the current app-publisher version."
-            }
-        ]
-    }, ... argMap};
 
     //
     // Since the js port of argparse doesnt support the 'allowAbbrev' property, manually
     // parse the arguments.  Jeezuz these devs sometimes makes the simplest things so complicated.
     // Achieved half the functionality of the enture argparse library with a 100 line function.
     //
-    const opts = doParseArgs(argMapExt, apOpts);
+    const opts = doParseArgs(argMap, apOpts);
 
-    try { //
-         // If user specified '-h' or --help', then just display help and exit
+    try { 
         //
-        if (opts.help)
+        // Validate options
+        //
+        Object.entries(opts).forEach((o) =>
         {
-            displayIntro(apOpts?.banner);
-            displayHelp(argMapExt);
-            process.exit(0);
-        }
+            const property: string = o[0];
+            let value: string | string[] = o[1] as (string | string[]);
 
-        //
-        // If user specified '--version', then just display version and exit
-        //
-        if (opts.version)
-        {
-            displayIntro(apOpts?.banner);
-            console.log(chalk.bold(gradient("cyan", "pink").multiline(
-`----------------------------------------------------------------------------
-${apOpts.app} Version :  ${apOpts.version}
-----------------------------------------------------------------------------
-`, {interpolation: "hsv"})));
-            process.exit(0);
-        }
+            if (property === "help" || property === "version") {
+                return; // continue forEach()
+            }
 
-        if (apOpts.enforceConstraints)
-        {
-            //
-            // Validate options
-            //
-            Object.entries(opts).forEach((o) =>
+            if (!argMap[property])
             {
-                const property: string = o[0];
-                let value: string | string[] = o[1] as (string | string[]);
+                throwError(`Unsupported publishrc option specified: ${property}`, apOpts);
+            }
 
-                if (property === "help" || property === "version") {
-                    return; // continue forEach()
-                }
+            if (!argMap[property][0])
+            {
+                throwError(`A publishrc option specified cannot be used on the command line: ${property}`, apOpts);
+            }
 
-                if (!argMapExt[property])
-                {
-                    throwError(`Unsupported publishrc option specified: ${property}`, apOpts);
-                }
+            //
+            // Remove properties from the object that were not explicitly specified
+            //
+            if (value === null) {
+                delete opts[o[0]];
+                return; // continue forEach()
+            }
 
-                if (!argMapExt[property][0])
-                {
-                    throwError(`A publishrc option specified cannot be used on the command line: ${property}`, apOpts);
-                }
+            // if (value instanceof Array)
+            // {
+            //     value = o.toString();
+            // }
 
-                //
-                // Remove properties from the object that were not explicitly specified
-                //
-                if (value === null) {
+            const publishRcType = argMap[property][1].trim(),
+                    defaultValue = argMap[property][2];
+
+            if (publishRcType === "flag")
+            {
+                if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
                     delete opts[o[0]];
                     return; // continue forEach()
                 }
-
-                // if (value instanceof Array)
-                // {
-                //     value = o.toString();
-                // }
-
-                const publishRcType = argMapExt[property][1].trim(),
-                      defaultValue = argMapExt[property][2];
-
-                if (publishRcType === "flag")
-                {
-                    if ((!value && defaultValue === "N") || (value && defaultValue === "Y")) {
-                        delete opts[o[0]];
-                        return; // continue forEach()
-                    }
-                    opts[o[0]] = value = value ? "Y" : "N";
+                opts[o[0]] = value = value ? "Y" : "N";
+            }
+            else if (publishRcType === "boolean")
+            {
+                if ((!value && !defaultValue) || (value && defaultValue)) {
+                    delete opts[o[0]];
+                    return; // continue forEach()
                 }
-                else if (publishRcType === "boolean")
-                {
-                    if ((!value && !defaultValue) || (value && defaultValue)) {
-                        delete opts[o[0]];
-                        return; // continue forEach()
+            }
+            else if (publishRcType.startsWith("enum("))
+            {
+                let enumIsValid = false, enumValues: string;
+                const matches = publishRcType.match(/[ ]*enum\((.+)\)/);
+                if (matches && matches.length > 1) // [0] is the whole match
+                {                                  // [1] is the 1st capture group match
+                    enumValues = matches[1];
+                    const vStrs = enumValues.split("|");
+                    if (!value) {
+                        value = vStrs[0];
                     }
-                }
-                else if (publishRcType.startsWith("enum("))
-                {
-                    let enumIsValid = false, enumValues: string;
-                    const matches = publishRcType.match(/[ ]*enum\((.+)\)/);
-                    if (matches && matches.length > 1) // [0] is the whole match
-                    {                                  // [1] is the 1st capture group match
-                        enumValues = matches[1];
-                        const vStrs = enumValues.split("|");
-                        if (!value) {
-                            value = vStrs[0];
-                        }
-                        else {
-                            for (const v in vStrs)
-                            {
-                                if (value[0] === vStrs[v]) {
-                                    value = value[0];
-                                    enumIsValid = true;
-                                    break;
-                                }
+                    else {
+                        for (const v in vStrs)
+                        {
+                            if (value[0] === vStrs[v]) {
+                                value = value[0];
+                                enumIsValid = true;
+                                break;
                             }
                         }
                     }
-                    if (!enumIsValid)
-                    {
-                        throwError(`Invalid publishrc option value specified: ${property}, must be: ${enumValues}`, apOpts);
-                    }
                 }
-            });
-        }
-
-        if (opts.verbose) // even if it's a stdout type task
-        {
-            displayIntro(apOpts?.banner);
-            console.log(gradient("cyan", "pink").multiline(
-`----------------------------------------------------------------------------
-Current Command Line Options
-----------------------------------------------------------------------------
-`, {interpolation: "hsv"}));
-            console.log(JSON.stringify(opts, undefined, 2));
-        }
+                if (!enumIsValid)
+                {
+                    throwError(`Invalid publishrc option value specified: ${property}, must be: ${enumValues}`, apOpts);
+                }
+            }
+        });
     }
     catch (error)
     {
@@ -235,25 +164,12 @@ Current Command Line Options
         }
     }
 
-    return opts;
+    return { opts, err: errors };
 }
 
 
-function displayIntro(banner: string)
+export function displayHelp(argMap: any)
 {
-    if (banner) {
-        console.log(chalk.bold(gradient("cyan", "pink").multiline(banner, {interpolation: "hsv"})));
-    }
-}
-
-
-function displayHelp(argMap: any)
-{
-    console.log(gradient("cyan", "pink").multiline(
-`----------------------------------------------------------------------------
-Detailed Help
-----------------------------------------------------------------------------
-        `, {interpolation: "hsv"}));
     console.log("");
     console.log("usage:");
     console.log("   All publishrc property names are the camel cased equivalent of the lowercase");
@@ -430,6 +346,7 @@ function getPropertyFromArg(arg: string, argMap: any): string | undefined
 
 function throwError(err: string, apOpts: ArgParserOptions)
 {
+    errors.push(err);
     if (apOpts.enforceConstraints) {
         throw new Error(err);
     }
