@@ -6,7 +6,6 @@ import hideSensitive = require("./hideSensitive");
 
 export interface ArgParserOptions
 {
-    app: string;
     enforceConstraints?: boolean;
     ignore?: string[];
     ignorePositional?: string[];
@@ -28,12 +27,7 @@ const errors: string[] = [];
 export function parseArgs(argMap: any, apOpts: ArgParserOptions)
 {
     if (!apOpts) {
-        apOpts = {
-            app: "App"
-        };
-    }
-    if (!apOpts.app) {
-        apOpts.app = "App";
+        apOpts = {};
     }
 
     //
