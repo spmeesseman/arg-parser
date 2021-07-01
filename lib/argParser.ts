@@ -554,8 +554,6 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
 
     if (lastIsPositional)
     {
-        console.log("Positional parameter not specified for:");
-        console.log("   " + lastProp);
         throw new Error(`Positional parameter not specified for '${lastProp}'`);
     }
 
