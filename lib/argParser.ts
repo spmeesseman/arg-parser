@@ -1,4 +1,4 @@
-import { env, stderr } from "process"; // eslint-disable-line node/prefer-global/process
+import { env } from "process"; // eslint-disable-line node/prefer-global/process
 import { isNumeric } from "./util";
 import * as util from "util";
 import hideSensitive = require("./hideSensitive");
@@ -22,41 +22,10 @@ export interface ArgParserDefinition
 }
 
 
-export class ArgParser
-{
-    private apOpts: ArgParserOptions;
-    public errors: string[];
-
-    /**
-     * Instantiates an argument parser
-     * @param [options] Parser options
-     * @param [options.app] App name
-     * @param [options.banner]
-     * A banner to be displayed when the console starts up, using chalk and gradient
-     */
-    constructor(options?: ArgParserOptions)
-    {
-        this.apOpts = options || { app: "app" };
-        if (this.apOpts.enforceConstraints === undefined) {
-            this.apOpts.enforceConstraints = true;
-        }
-    }
-
-    parse(argMap: any)
-    {
-        const o = _parseArgs(argMap, this.apOpts);
-        if (o.err.length > 0) {
-            this.errors = [ ...o.err ];
-        }
-        return o.opts;
-    }
-}
-
-
 const errors: string[] = [];
 
 
-function _parseArgs(argMap: any, apOpts?: ArgParserOptions): { opts: any, err: string[] }
+export function parseArgs(argMap: any, apOpts: ArgParserOptions)
 {
     if (!apOpts) {
         apOpts = {
@@ -160,11 +129,15 @@ function _parseArgs(argMap: any, apOpts?: ArgParserOptions): { opts: any, err: s
     catch (error)
     {
         if (error.name !== "YError") {
-            stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
+            errors.push(hideSensitive(env)(util.inspect(error, {colors: true})));
         }
     }
 
-    return { opts, err: errors };
+    if (errors.length > 0) {
+        opts.errors = [ ...errors ];
+    }
+
+    return opts;
 }
 
 
@@ -351,6 +324,7 @@ function throwError(err: string, apOpts: ArgParserOptions)
         throw new Error(err);
     }
 }
+
 
 function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
 {
