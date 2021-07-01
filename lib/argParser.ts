@@ -39,13 +39,13 @@ export class ArgParser
      */
     constructor(options?: ArgParserOptions)
     {
-        this.apOpts = options;
-        if (this.apOpts.enforceConstraints === undefined) {
-            this.apOpts.enforceConstraints = true;
+        this.apOpts = options || { app: "app" };
+        if (!this.apOpts.enforceConstraints) {
+            this.apOpts.enforceConstraints = false;
         }
     }
 
-    parseArgs(argMap: any)
+    parse(argMap: any)
     {
         return _parseArgs(argMap, this.apOpts);
     }
@@ -148,12 +148,12 @@ ${apOpts.app} Version :  ${apOpts.version}
 
                 if (!argMapExt[property])
                 {
-                    throw new Error(`Unsupported publishrc option specified: ${property}`);
+                    throwError(`Unsupported publishrc option specified: ${property}`, apOpts);
                 }
 
                 if (!argMapExt[property][0])
                 {
-                    throw new Error(`A publishrc option specified cannot be used on the command line: ${property}`);
+                    throwError(`A publishrc option specified cannot be used on the command line: ${property}`, apOpts);
                 }
 
                 //
@@ -211,7 +211,7 @@ ${apOpts.app} Version :  ${apOpts.version}
                     }
                     if (!enumIsValid)
                     {
-                        throw new Error(`Invalid publishrc option value specified: ${property}, must be: ${enumValues}`);
+                        throwError(`Invalid publishrc option value specified: ${property}, must be: ${enumValues}`, apOpts);
                     }
                 }
             });
@@ -428,7 +428,14 @@ function getPropertyFromArg(arg: string, argMap: any): string | undefined
 }
 
 
-function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
+function throwError(err: string, apOpts: ArgParserOptions)
+{
+    if (apOpts.enforceConstraints) {
+        throw new Error(err);
+    }
+}
+
+function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
 {
     const opts: any = {},
         args = process.argv.slice(2);
@@ -454,7 +461,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
             const p = getPropertyFromArg(a, argMap);
             if (!p || !argMap[p])
             {
-                throw new Error(`Unsupported publishrc option specified: ${a}`);
+                throwError(`Unsupported publishrc option specified: ${a}`, apOpts);
             }
             if (lastIsPositional)
             {
@@ -463,7 +470,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                     opts[lastProp] = "Y";
                 }
                 else {
-                    throw new Error(`Positional parameter not specified for: ${lastProp}`);
+                    throwError(`Positional parameter not specified for: ${lastProp}`, apOpts);
                 }
             }
 
@@ -505,7 +512,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                     opts[lastProp].push(a);
                 }
                 else {
-                    throw new Error(`String type arguments can have only one positional parameter: ${lastProp}`);
+                    throwError(`String type arguments can have only one positional parameter: ${lastProp}`, apOpts);
                 }
             }
             else if (valueType.startsWith("enum"))
@@ -514,19 +521,19 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                     opts[lastProp] = a;
                 }
                 else {
-                    throw new Error(`Enum type arguments can have only one positional parameter: ${lastProp}`);
+                    throwError(`Enum type arguments can have only one positional parameter: ${lastProp}`, apOpts);
                 }
             }
             else if (valueType.startsWith("flag"))
             {
                 if (!opts[lastProp]) {
                     if (a !== "Y" && a !== "N") {
-                        throw new Error(`Flag type arguments can have only one positional parameter: ${lastProp}`);
+                        throwError(`Flag type arguments can have only one positional parameter: ${lastProp}`, apOpts);
                     }
                     opts[lastProp] = a;
                 }
                 else {
-                    throw new Error("Flag type arguments can have only one positional parameter: Y/N");
+                    throwError("Flag type arguments can have only one positional parameter: Y/N", apOpts);
                 }
             }
             else if (valueType.includes("number"))
@@ -536,17 +543,17 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                         opts[lastProp] = Number(a);
                     }
                     else {
-                        throw new Error(`Number type arguments can have only one positional parameter: ${lastProp}`);
+                        throwError(`Number type arguments can have only one positional parameter: ${lastProp}`, apOpts);
                     }
                 }
                 else
                 {
-                    throw new Error(`Positional parameter must be a number for property: ${lastProp}`);
+                    throwError(`Positional parameter must be a number for property: ${lastProp}`, apOpts);
                 }
             }
             else
             {
-                throw new Error(`Positional parameter not supported for property: ${lastProp}`);
+                throwError(`Positional parameter not supported for property: ${lastProp}`, apOpts);
             }
             lastIsPositional = undefined;
         }
@@ -554,7 +561,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
 
     if (lastIsPositional)
     {
-        throw new Error(`Positional parameter not specified for '${lastProp}'`);
+        throwError(`Positional parameter not specified for '${lastProp}'`, apOpts);
     }
 
     return opts;
