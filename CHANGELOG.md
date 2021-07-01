@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version [1.1.10](https://github.com/spmeesseman/arg-parser/compare/v1.1.9...v1.1.10) (July 1st, 2021)
+
+### Refactoring
+
+- default enforce constraint to true
+
 ## Version [1.1.9](https://github.com/spmeesseman/arg-parser/compare/v1.1.8...v1.1.9) (July 1st, 2021)
 
 ### Bug Fixes
