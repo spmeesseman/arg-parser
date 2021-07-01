@@ -4,6 +4,14 @@
 
 ### Refactoring
 
+- include type files in release
+- include types in build
+- remove class wrapper, import and call parseArgs directly
+
+## Version [1.1.12](https://github.com/spmeesseman/arg-parser/compare/v1.1.11...v1.1.12) (July 1st, 2021)
+
+### Refactoring
+
 - include types in build
 - remove class wrapper, import and call parseArgs directly
 
