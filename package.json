@@ -16,10 +16,7 @@
         "type": "git",
         "url": "https://github.com/spmeesseman/arg-parser.git"
     },
-    "dependencies": {
-        "chalk": "^4.1.1",
-        "gradient-string": "^1.2.0"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@types/node": "^15.12.1",
         "eslint": "^7.28.0",
