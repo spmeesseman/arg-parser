@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version [1.1.11](https://github.com/spmeesseman/arg-parser/compare/v1.1.10...v1.1.11) (July 1st, 2021)
+
+### Refactoring
+
+- take out --help, --version, and --verbose internal handling
+
 ## Version [1.1.10](https://github.com/spmeesseman/arg-parser/compare/v1.1.9...v1.1.10) (July 1st, 2021)
 
 ### Refactoring
