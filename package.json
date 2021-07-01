@@ -30,9 +30,7 @@
     "main": "./index.js",
     "files": [
         "index.js",
-        "index.d.ts",
-        "build/lib/*.js",
-        "build/lib/*.d.ts"
+        "build/lib/*.js"
     ],
     "keywords": [
         "parser",

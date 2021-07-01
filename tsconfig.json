@@ -12,14 +12,9 @@
         "module": "commonjs",
         "target": "es6",
         "outDir": "build",
-        "sourceMap": true,
         "rootDir": ".",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "composite": true,
-        "declaration": true,
-        "declarationMap": true,
-		"emitDeclarationOnly": false,
         "lib": [
             "dom",
             "es6"
