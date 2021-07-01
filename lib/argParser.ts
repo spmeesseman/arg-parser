@@ -40,8 +40,8 @@ export class ArgParser
     constructor(options?: ArgParserOptions)
     {
         this.apOpts = options || { app: "app" };
-        if (!this.apOpts.enforceConstraints) {
-            this.apOpts.enforceConstraints = false;
+        if (this.apOpts.enforceConstraints === undefined) {
+            this.apOpts.enforceConstraints = true;
         }
     }
 
