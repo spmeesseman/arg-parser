@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version [1.1.8](https://github.com/spmeesseman/arg-parser/compare/v1.1.7...v1.1.8) (July 1st, 2021)
+
+### Refactoring
+
+- remove console logging
+
 ## Version [1.1.7](https://github.com/spmeesseman/arg-parser/compare/v1.1.6...v1.1.7) (July 1st, 2021)
 
 ### Documentation
