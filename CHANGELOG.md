@@ -6,6 +6,10 @@
 
 - main import points to wrong directory
 
+### Refactoring
+
+- remove types files
+
 ## Version [1.1.12](https://github.com/spmeesseman/arg-parser/compare/v1.1.11...v1.1.12) (July 1st, 2021)
 
 ### Refactoring
