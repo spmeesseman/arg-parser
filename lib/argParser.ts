@@ -148,16 +148,12 @@ ${apOpts.app} Version :  ${apOpts.version}
 
                 if (!argMapExt[property])
                 {
-                    console.log("Unsupported publishrc option specified:");
-                    console.log("   " + property);
-                    process.exit(0);
+                    throw new Error(`Unsupported publishrc option specified: ${property}`);
                 }
 
                 if (!argMapExt[property][0])
                 {
-                    console.log("A publishrc option specified cannot be used on the command line:");
-                    console.log("   " + property);
-                    process.exit(0);
+                    throw new Error(`A publishrc option specified cannot be used on the command line: ${property}`);
                 }
 
                 //
@@ -215,10 +211,7 @@ ${apOpts.app} Version :  ${apOpts.version}
                     }
                     if (!enumIsValid)
                     {
-                        console.log("Invalid publishrc option value specified:");
-                        console.log("   " + property);
-                        console.log("   Must be " + enumValues);
-                        process.exit(0);
+                        throw new Error(`Invalid publishrc option value specified: ${property}, must be: ${enumValues}`);
                     }
                 }
             });
@@ -461,9 +454,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
             const p = getPropertyFromArg(a, argMap);
             if (!p || !argMap[p])
             {
-                console.log("Unsupported publishrc option specified:");
-                console.log("   " + a);
-                process.exit(0);
+                throw new Error(`Unsupported publishrc option specified: ${a}`);
             }
             if (lastIsPositional)
             {
@@ -472,9 +463,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                     opts[lastProp] = "Y";
                 }
                 else {
-                    console.log("Positional parameter not specified for:");
-                    console.log("   " + lastProp);
-                    process.exit(0);
+                    throw new Error(`Positional parameter not specified for: ${lastProp}`);
                 }
             }
 
@@ -516,9 +505,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                     opts[lastProp].push(a);
                 }
                 else {
-                    console.log("String type arguments can have only one positional parameter:");
-                    console.log("   " + lastProp);
-                    process.exit(0);
+                    throw new Error(`String type arguments can have only one positional parameter: ${lastProp}`);
                 }
             }
             else if (valueType.startsWith("enum"))
@@ -527,25 +514,19 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                     opts[lastProp] = a;
                 }
                 else {
-                    console.log("Enum type arguments can have only one positional parameter:");
-                    console.log("   " + lastProp);
-                    process.exit(0);
+                    throw new Error(`Enum type arguments can have only one positional parameter: ${lastProp}`);
                 }
             }
             else if (valueType.startsWith("flag"))
             {
                 if (!opts[lastProp]) {
                     if (a !== "Y" && a !== "N") {
-                        console.log("Flag type arguments can have only one positional parameter:");
-                        console.log("   " + lastProp);
-                        process.exit(0);
+                        throw new Error(`Flag type arguments can have only one positional parameter: ${lastProp}`);
                     }
                     opts[lastProp] = a;
                 }
                 else {
-                    console.log("Flag type arguments can have only one positional parameter:");
-                    console.log("   Y/N/y/n");
-                    process.exit(0);
+                    throw new Error("Flag type arguments can have only one positional parameter: Y/N");
                 }
             }
             else if (valueType.includes("number"))
@@ -555,23 +536,17 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
                         opts[lastProp] = Number(a);
                     }
                     else {
-                        console.log("Number type arguments can have only one positional parameter:");
-                        console.log("   " + lastProp);
-                        process.exit(0);
+                        throw new Error(`Number type arguments can have only one positional parameter: ${lastProp}`);
                     }
                 }
                 else
                 {
-                    console.log("Positional parameter must be a number for property:");
-                    console.log("   " + lastProp);
-                    process.exit(0);
+                    throw new Error(`Positional parameter must be a number for property: ${lastProp}`);
                 }
             }
             else
             {
-                console.log("Positional parameters not supported for property:");
-                console.log("   " + lastProp);
-                process.exit(0);
+                throw new Error(`Positional parameter not supported for property: ${lastProp}`);
             }
             lastIsPositional = undefined;
         }
@@ -581,7 +556,7 @@ function doParseArgs(argMap: any, apOpts?: ArgParserOptions): any
     {
         console.log("Positional parameter not specified for:");
         console.log("   " + lastProp);
-        process.exit(0);
+        throw new Error(`Positional parameter not specified for '${lastProp}'`);
     }
 
     return opts;
