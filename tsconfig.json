@@ -15,6 +15,7 @@
         "rootDir": ".",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "composite": true,
         "lib": [
             "dom",
             "es6"
