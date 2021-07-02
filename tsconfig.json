@@ -2,17 +2,19 @@
     "exclude": [
         "node_modules",
         "doc",
-        "build",
+        "dist",
         "install",
         "res",
         "script",
         "**/*.spec.ts"
     ],
+    "include": ["src/**/*"],
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
-        "outDir": "build",
-        "rootDir": ".",
+        "outDir": "dist",
+        "rootDir": "src",
+        "declaration": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "lib": [

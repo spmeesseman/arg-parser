@@ -27,10 +27,12 @@
         "build": "npx tsc -p ./",
         "publish-npm": "npm run build && npm publish"
     },
-    "main": "./index.js",
+    "main": "./dist/index.js",
     "files": [
-        "index.js",
-        "build/lib/*.js"
+        "dist/index.js",
+        "dist/index.d,ts",
+        "dist/lib/*.js",
+        "dist/lib/*.d.ts"
     ],
     "keywords": [
         "parser",
