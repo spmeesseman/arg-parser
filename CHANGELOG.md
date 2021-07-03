@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version 1.1.19 (July 3rd, 2021)
+
+### Bug Fixes
+
+- an invalid positional causes remaining arguments to be read in incorrectly
+
 ## Version 1.1.18 (July 3rd, 2021)
 
 ### Bug Fixes
