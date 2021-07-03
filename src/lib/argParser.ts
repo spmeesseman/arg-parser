@@ -418,11 +418,11 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
             else if (valueType.startsWith("flag"))
             {
                 if (!opts[lastProp]) {
+                    opts[lastProp] = a;
                     if (a !== "Y" && a !== "N") {
                         throwError(`Flag type arguments can have only one positional parameter: ${lastProp}`, apOpts);
                         return; // continue forEach()
                     }
-                    opts[lastProp] = a;
                 }
                 else {
                     throwError("Flag type arguments can have only one positional parameter: Y/N", apOpts);
@@ -442,6 +442,9 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 }
                 else
                 {
+                    if (!opts[lastProp]) {
+                        opts[lastProp] = a;
+                    }
                     throwError(`Positional parameter must be a number for property: ${lastProp}`, apOpts);
                     return; // continue forEach()
                 }
