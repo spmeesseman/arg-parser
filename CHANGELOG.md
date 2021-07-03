@@ -1,5 +1,12 @@
 # ARG-PARSER CHANGE LOG
 
+## Version 1.1.18 (July 3rd, 2021)
+
+### Bug Fixes
+
+- an invalid numeric or enum positional causes remaining arguments to be read in incorrectly
+- error is not recorded for number type arg if positional is non-numeric
+
 ## Version 1.1.17 (July 3rd, 2021)
 
 ### Bug Fixes
