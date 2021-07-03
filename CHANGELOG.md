@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version 1.1.16 (July 2nd, 2021)
+
+### Bug Fixes
+
+- invalid argument throw uncaught exception if 'enforceConstraints' flag is not set
+
 ## Version 1.1.15 (July 2nd, 2021)
 
 ### Refactoring
