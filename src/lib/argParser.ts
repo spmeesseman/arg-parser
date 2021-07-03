@@ -402,7 +402,6 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 }
                 else {
                     throwError(`String type arguments can have only one positional parameter: ${lastProp}`, apOpts);
-                    return; // continue forEach()
                 }
             }
             else if (valueType.startsWith("enum"))
@@ -412,7 +411,6 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 }
                 else {
                     throwError(`Enum type arguments can have only one positional parameter: ${lastProp}`, apOpts);
-                    return; // continue forEach()
                 }
             }
             else if (valueType.startsWith("flag"))
@@ -421,12 +419,10 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                     opts[lastProp] = a;
                     if (a !== "Y" && a !== "N") {
                         throwError(`Flag type arguments can have only one positional parameter: ${lastProp}`, apOpts);
-                        return; // continue forEach()
                     }
                 }
                 else {
                     throwError("Flag type arguments can have only one positional parameter: Y/N", apOpts);
-                    return; // continue forEach()
                 }
             }
             else if (valueType.includes("number"))
@@ -437,7 +433,6 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                     }
                     else {
                         throwError(`Number type arguments can have only one positional parameter: ${lastProp}`, apOpts);
-                        return; // continue forEach()
                     }
                 }
                 else
@@ -446,13 +441,11 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                         opts[lastProp] = a;
                     }
                     throwError(`Positional parameter must be a number for property: ${lastProp}`, apOpts);
-                    return; // continue forEach()
                 }
             }
             else
             {
                 throwError(`Positional parameter not supported for property: ${lastProp}`, apOpts);
-                return; // continue forEach()
             }
             lastIsPositional = undefined;
         }
