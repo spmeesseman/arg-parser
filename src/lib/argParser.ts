@@ -349,6 +349,7 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
             if (!p || !argMap[p])
             {
                 throwError(`Unsupported publishrc option specified: ${a}`, apOpts);
+                return; // continue forEach()
             }
             if (lastIsPositional)
             {
@@ -358,6 +359,7 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 }
                 else {
                     throwError(`Positional parameter not specified for: ${lastProp}`, apOpts);
+                    return; // continue forEach()
                 }
             }
 
@@ -400,6 +402,7 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 }
                 else {
                     throwError(`String type arguments can have only one positional parameter: ${lastProp}`, apOpts);
+                    return; // continue forEach()
                 }
             }
             else if (valueType.startsWith("enum"))
@@ -409,6 +412,7 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 }
                 else {
                     throwError(`Enum type arguments can have only one positional parameter: ${lastProp}`, apOpts);
+                    return; // continue forEach()
                 }
             }
             else if (valueType.startsWith("flag"))
@@ -416,11 +420,13 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                 if (!opts[lastProp]) {
                     if (a !== "Y" && a !== "N") {
                         throwError(`Flag type arguments can have only one positional parameter: ${lastProp}`, apOpts);
+                        return; // continue forEach()
                     }
                     opts[lastProp] = a;
                 }
                 else {
                     throwError("Flag type arguments can have only one positional parameter: Y/N", apOpts);
+                    return; // continue forEach()
                 }
             }
             else if (valueType.includes("number"))
@@ -431,16 +437,19 @@ function doParseArgs(argMap: any, apOpts: ArgParserOptions): any
                     }
                     else {
                         throwError(`Number type arguments can have only one positional parameter: ${lastProp}`, apOpts);
+                        return; // continue forEach()
                     }
                 }
                 else
                 {
                     throwError(`Positional parameter must be a number for property: ${lastProp}`, apOpts);
+                    return; // continue forEach()
                 }
             }
             else
             {
                 throwError(`Positional parameter not supported for property: ${lastProp}`, apOpts);
+                return; // continue forEach()
             }
             lastIsPositional = undefined;
         }
