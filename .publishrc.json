@@ -16,8 +16,8 @@
     "npmRelease":        "Y",
     "repo":              "https://github.com/spmeesseman/arg-parser.git",
     "repoType":          "git",
-    "skipChangelogEdits":"N",
-    "skipVersionEdits":  "N",
+    "skipChangelogEdits":"Y",
+    "skipVersionEdits":  "Y",
     "testEmailRecip":    "spmeesseman@gmail.com",
     "textEditor":        "notepad",
     "vcWebPath":         "https://github.com/spmeesseman/arg-parser"

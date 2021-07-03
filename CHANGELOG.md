@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version 1.1.17 (July 3rd, 2021)
+
+### Bug Fixes
+
+- error is not recorded for number type arg if positional is non-numeric
+
 ## Version 1.1.16 (July 2nd, 2021)
 
 ### Bug Fixes
