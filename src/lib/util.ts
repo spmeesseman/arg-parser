@@ -1,9 +1,13 @@
 
 export function isNumeric(value: string | number): boolean
 {
-   return ((value !== null) && (value !== undefined) &&
-           (value !== "") &&
-           !isNaN(Number(value.toString())));
+    try {
+        return ((value !== null) && (value !== undefined) &&
+                (value !== "") && !isNaN(Number(value.toString())));
+    }
+    catch (e) {
+        return false;
+    }
 }
 
 
