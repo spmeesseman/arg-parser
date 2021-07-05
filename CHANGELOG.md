@@ -1,5 +1,11 @@
 # ARG-PARSER CHANGE LOG
 
+## Version 1.2.0 (July 5th, 2021)
+
+### Features
+
+- **General:** add 'helpPrivate' option for arguments that should not show when using the --help command line argument.
+
 ## Version 1.1.19 (July 3rd, 2021)
 
 ### Bug Fixes
