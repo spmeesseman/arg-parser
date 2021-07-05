@@ -16,6 +16,7 @@ export interface ArgParserDefinition
     argument: string | string[]
     default: string | string[] | boolean | number;
     help: string;
+    helpPrivate: boolean;
     isCmdLine: boolean;
     type: string;
 }
@@ -172,25 +173,27 @@ export function displayHelp(argMap: any)
                 cmdLineArgs = getArgsFromProperty(property, argMap);
             let cmdLine = "", usage: string | string[] = "";
 
-            if (def[3] instanceof String || typeof def[3] === "string")   //  [
-            {                                                             //    true,
-                line += def[3];                                           //    "boolean",
-                console.log(line);                                        //    false,
-                for (let i = 4; i < def.length; i++) {                    //    "Display help. This continues",
-                    console.log(`                        ${def[i]}`);     //    "to successuve lines with ','."
-                }                                                         //  ]
+            if (def[3] instanceof String || typeof def[3] === "string")       //  [
+            {                                                                 //    true,
+                line += def[3];                                               //    "boolean",
+                console.log(line);                                            //    false,
+                for (let i = 4; i < def.length; i++) {                        //    "Display help. This continues",
+                    console.log(`                        ${def[i]}`);         //    "to successuve lines with ','."
+                }                                                             //  ]
             }
-            else if (def.length > 4 && def[4] instanceof Object)          //  [
-            {                                                             //     true,
-                const odef = def[4],                                      //     "boolean"
-                    lines = odef.help.split("\n");                      //       true,
-                line += lines[0];                                         //     [ -h, ---help ],
-                console.log(line);                                        //     {
-                for (let i = 1; i < lines.length; i++) {                  //       help: "Display help.  This continues" +
-                    console.log(`                        ${lines[i]}`);   //             "to successive lines with '+'."
-                }                                                         //       usage: ""
-                if (odef.usage) {                                         //     }
-                    usage = odef.usage;                                   //  ]
+            else if (def.length > 4 && def[4] instanceof Object)              //  [
+            {                                                                 //     true,
+                const odef = def[4],                                          //     "boolean"
+                    lines = odef.help.split("\n");                            //     true,
+                if (odef.helpPrivate === true) {                              //     [ -h, ---help ],
+                    line += lines[0];                                         //     {
+                    console.log(line);                                        //       help: "Display help.  This continues to\n" +
+                    for (let i = 1; i < lines.length; i++) {                  //              "successive lines with '\n' and +'.",
+                        console.log(`                        ${lines[i]}`);   //       usage: ""      
+                    }                                                         //     } 
+                    if (odef.usage) {                                         //  ]
+                        usage = odef.usage;                                   //
+                    }
                 }
             }
             console.log("");
