@@ -185,7 +185,7 @@ export function displayHelp(argMap: any)
             {                                                                 //     true,
                 const odef = def[4],                                          //     "boolean"
                     lines = odef.help.split("\n");                            //     true,
-                if (odef.helpPrivate === true) {                              //     [ -h, ---help ],
+                if (odef.helpPrivate !== true) {                              //     [ -h, ---help ],
                     line += lines[0];                                         //     {
                     console.log(line);                                        //       help: "Display help.  This continues to\n" +
                     for (let i = 1; i < lines.length; i++) {                  //              "successive lines with '\n' and +'.",
